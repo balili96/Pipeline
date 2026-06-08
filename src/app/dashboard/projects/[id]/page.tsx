@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { getProjectById, getTasksByProjectId } from "@/lib/data";
 import { Task } from "@/lib/types";
+import { fetchTasks as apiFetchTasks } from "@/lib/api-client";
 import KanbanBoard from "@/components/kanban-board";
 import AIPanel from "@/components/ai-panel";
 import SprintGenerator from "@/components/sprint-generator";
@@ -19,12 +20,35 @@ export default function ProjectDetailPage() {
   const searchParams = useSearchParams();
   const showAIPanel = searchParams.get("ai") !== "0";
 
-  const [tasks, setTasks] = useState<Task[]>(() =>
-    getTasksByProjectId(projectId)
-  );
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showDocuments, setShowDocuments] = useState(false);
   const [showTeam, setShowTeam] = useState(false);
+
+  useEffect(() => {
+    apiFetchTasks(projectId)
+      .then((apiTasks) => {
+        if (apiTasks.length > 0) {
+          setTasks(apiTasks.map((t) => ({
+            id: t.id,
+            title: t.title,
+            description: t.description,
+            status: t.status as Task["status"],
+            priority: t.priority as Task["priority"],
+            tags: t.tags,
+            projectId: t.project_id,
+            aiGenerated: t.ai_generated,
+            progress: t.progress,
+            assignee: t.assignee,
+            dueDate: t.due_date,
+          })));
+        }
+      })
+      .catch(() => {
+        // fallback to mock
+        setTasks(getTasksByProjectId(projectId));
+      });
+  }, [projectId]);
 
   const handleTasksGenerated = useCallback(
     (newTasks: Task[]) => {

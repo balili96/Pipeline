@@ -1,20 +1,41 @@
 "use client";
 
-import { useState } from "react";
-import { projects as initialProjects, getTasksByProjectId } from "@/lib/data";
+import { useState, useEffect } from "react";
+import { projects as mockProjects, getTasksByProjectId } from "@/lib/data";
 import ProjectCard from "@/components/project-card";
 import type { Project } from "@/lib/types";
+import { fetchProjects, createProject as apiCreateProject } from "@/lib/api-client";
 
 const filterOptions = ["All", "Active", "Completed"] as const;
 
 const projectIcons = ["🚀", "💻", "📱", "🎨", "⚙️", "🔧", "📊", "🛒", "📝", "🧠"];
 
 export default function DashboardPage() {
-  const [projects, setProjects] = useState<Project[]>(initialProjects);
+  const [projects, setProjects] = useState<Project[]>(mockProjects);
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState<string>("All");
   const [showModal, setShowModal] = useState(false);
   const [newProject, setNewProject] = useState({ name: "", description: "" });
+  const [loading, setLoading] = useState(false);
+
+  // Fetch real projects from backend API
+  useEffect(() => {
+    setLoading(true);
+    fetchProjects()
+      .then((apiProjects) => {
+        if (apiProjects.length > 0) {
+          setProjects(apiProjects.map((p) => ({
+            id: p.id,
+            name: p.name,
+            description: p.description,
+            status: p.status as "active" | "completed" | "archived",
+            createdAt: p.created_at,
+          })));
+        }
+      })
+      .catch(() => { /* fallback to mock data */ })
+      .finally(() => setLoading(false));
+  }, []);
 
   const totalTasks = projects.reduce((sum, p) => sum + getTasksByProjectId(p.id).length, 0);
   const activeProjects = projects.filter((p) => p.status === "active").length;
@@ -39,17 +60,32 @@ export default function DashboardPage() {
     const desc = newProject.description.trim();
     if (!name) return;
 
-    const newProj: Project = {
-      id: `proj-${Date.now()}`,
-      name,
-      description: desc || `${name} — AI-powered project`,
-      status: "active",
-      createdAt: new Date().toISOString(),
-    };
-
-    setProjects((prev) => [newProj, ...prev]);
-    setNewProject({ name: "", description: "" });
-    setShowModal(false);
+    apiCreateProject(name, desc)
+      .then((newProj) => {
+        const project: Project = {
+          id: newProj.id,
+          name: newProj.name,
+          description: newProj.description || `${name} — AI-powered project`,
+          status: "active",
+          createdAt: newProj.created_at,
+        };
+        setProjects((prev) => [project, ...prev]);
+        setNewProject({ name: "", description: "" });
+        setShowModal(false);
+      })
+      .catch(() => {
+        // Fallback: create locally
+        const project: Project = {
+          id: `proj-${Date.now()}`,
+          name,
+          description: desc || `${name} — AI-powered project`,
+          status: "active",
+          createdAt: new Date().toISOString(),
+        };
+        setProjects((prev) => [project, ...prev]);
+        setNewProject({ name: "", description: "" });
+        setShowModal(false);
+      });
   }
 
   return (
