@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { projects as mockProjects, getTasksByProjectId } from "@/lib/data";
 import ProjectCard from "@/components/project-card";
 import type { Project } from "@/lib/types";
-import { fetchProjects, createProject as apiCreateProject } from "@/lib/api-client";
+import { fetchProjects, createProject as apiCreateProject, fetchTasks } from "@/lib/api-client";
 
 const filterOptions = ["All", "Active", "Completed"] as const;
 
@@ -17,12 +17,13 @@ export default function DashboardPage() {
   const [showModal, setShowModal] = useState(false);
   const [newProject, setNewProject] = useState({ name: "", description: "" });
   const [loading, setLoading] = useState(false);
+  const [taskCounts, setTaskCounts] = useState<Record<string, number>>({});
 
   // Fetch real projects from backend API
   useEffect(() => {
     setLoading(true);
     fetchProjects()
-      .then((apiProjects) => {
+      .then(async (apiProjects) => {
         if (apiProjects.length > 0) {
           setProjects(apiProjects.map((p) => ({
             id: p.id,
@@ -31,13 +32,25 @@ export default function DashboardPage() {
             status: p.status as "active" | "completed" | "archived",
             createdAt: p.created_at,
           })));
+
+          // Fetch task counts for each project
+          const counts: Record<string, number> = {};
+          await Promise.all(apiProjects.map(async (p) => {
+            try {
+              const tasks = await fetchTasks(p.id);
+              counts[p.id] = tasks.length;
+            } catch {
+              counts[p.id] = getTasksByProjectId(p.id).length;
+            }
+          }));
+          setTaskCounts(counts);
         }
       })
       .catch(() => { /* fallback to mock data */ })
       .finally(() => setLoading(false));
   }, []);
 
-  const totalTasks = projects.reduce((sum, p) => sum + getTasksByProjectId(p.id).length, 0);
+  const totalTasks = Object.values(taskCounts).reduce((a, b) => a + b, 0) || projects.reduce((sum, p) => sum + getTasksByProjectId(p.id).length, 0);
   const activeProjects = projects.filter((p) => p.status === "active").length;
   const doneTasks = projects.reduce(
     (sum, p) => sum + getTasksByProjectId(p.id).filter((t) => t.status === "done").length,
