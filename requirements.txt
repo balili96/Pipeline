@@ -1,0 +1,7 @@
+uvicorn
+fastapi
+sqlalchemy
+python-docx
+aiosqlite
+python-multipart
+pydantic-settings
