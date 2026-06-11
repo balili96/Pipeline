@@ -6,4 +6,4 @@ services:
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: DATABASE_URL
-        value: sqlite+aiosqlite:///./pipeline.db
+        value: postgresql+asyncpg://postgres:Balili0000%2A%40@db.tiiircotimeftvllqglv.supabase.co:6543/postgres

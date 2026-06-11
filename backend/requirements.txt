@@ -3,5 +3,6 @@ fastapi
 sqlalchemy
 python-docx
 aiosqlite
+asyncpg
 python-multipart
 pydantic-settings
