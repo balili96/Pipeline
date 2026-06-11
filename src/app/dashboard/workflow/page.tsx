@@ -14,15 +14,21 @@ import PipelineInsights from "@/components/pipeline-insights";
 /* ─── Constants ─── */
 
 const STAGE_DURATIONS: Record<string, number> = {
-  plan: 2500,
-  code: 3500,
-  test: 2000,
-  deploy: 2500,
-  docs: 1500,
+  integration: 2000,
+  scope: 2000,
+  schedule: 2500,
+  cost: 2000,
+  quality: 1500,
+  resource: 1500,
+  communications: 1500,
+  risk: 2000,
+  procurement: 2000,
+  stakeholder: 1500,
 };
 
-const stageOrder: Array<"plan" | "code" | "test" | "deploy" | "docs"> = [
-  "plan", "code", "test", "deploy", "docs",
+const stageOrder: Array<AgentType> = [
+  "integration", "scope", "schedule", "cost", "quality",
+  "resource", "communications", "risk", "procurement", "stakeholder",
 ];
 
 type SectionId = "flow" | "trail" | "insights";

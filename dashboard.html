@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pipeline — Project Manager Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+<style>
+/* ============ CSS VARIABLES ============ */
+:root {
+  --bg: #F8F9FB;
+  --surface: #FFFFFF;
+  --card: #FFFFFF;
+  --border: #E2E5EB;
+  --accent: #4F7CFF;
+  --accent-hover: #3B6AE8;
+  --accent-light: #EEF2FF;
+  --green: #22D3A0;
+  --green-light: #E8FBF4;
+  --green-dark: #0F9E6E;
+  --red: #FF6B6B;
+  --red-light: #FFF0F0;
+  --red-dark: #E04444;
+  --amber: #FFB400;
+  --amber-light: #FFF8E6;
+  --amber-dark: #D99A00;
+  --text: #111214;
+  --text-secondary: #4B5563;
+  --muted: #6B7280;
+  --muted-light: #9CA3AF;
+  --sidebar-width: 240px;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
+  --transition: 0.2s ease;
+}
+
+/* ============ RESET & BASE ============ */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============ SCROLLBAR ============ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted-light); }
+
+/* ============ SIDEBAR ============ */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 24px 24px 20px;
+}
+
+.logo-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.logo-text {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+
+.nav-section {
+  padding: 8px 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--muted-light);
+  padding: 12px 12px 6px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+  text-decoration: none;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.nav-item:hover {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.nav-item.active {
+  background: var(--accent-light);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.nav-item i {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.sidebar-footer {
+  padding: 16px 12px;
+  border-top: 1px solid var(--border);
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.user-card:hover {
+  background: var(--bg);
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.user-role {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* ============ MAIN CONTENT ============ */
+.main {
+  margin-left: var(--sidebar-width);
+  flex: 1;
+  min-height: 100vh;
+  padding: 32px 40px;
+  max-width: calc(100vw - var(--sidebar-width));
+}
+
+/* ============ VIEW CONTAINER ============ */
+.view {
+  display: none;
+  animation: fadeIn 0.25s ease;
+}
+
+.view.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============ PROJECT LIST ============ */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.page-header-left h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.4px;
+}
+
+.page-header-left p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+}
+
+/* ============ PROJECT CARD ============ */
+.project-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  cursor: pointer;
+  transition: all var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+
+.project-card:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.project-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.project-card-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  flex: 1;
+  line-height: 1.3;
+}
+
+.project-card-title:hover {
+  color: var(--accent);
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.status-badge.active {
+  background: var(--green-light);
+  color: var(--green-dark);
+}
+
+.status-badge.completed {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.project-card-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+.project-stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.stat-item .count {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.stat-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.stat-dot.amber { background: var(--amber); }
+.stat-dot.blue { background: var(--accent); }
+.stat-dot.green { background: var(--green); }
+
+.progress-bar-wrapper {
+  margin-top: 14px;
+}
+
+.progress-bar-track {
+  width: 100%;
+  height: 6px;
+  background: var(--bg);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.progress-bar-fill.active { background: var(--accent); }
+.progress-bar-fill.completed { background: var(--green); }
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 5px;
+}
+
+/* ============ PROJECT DETAIL VIEW ============ */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.breadcrumb a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--transition);
+}
+
+.breadcrumb a:hover {
+  color: var(--accent);
+}
+
+.breadcrumb .sep {
+  color: var(--border);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.detail-header h1 {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+/* ============ TWO-COLUMN LAYOUT ============ */
+.detail-columns {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.detail-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-sidebar {
+  width: 384px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 32px;
+}
+
+/* ============ KANBAN BOARD ============ */
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.kanban-column {
+  background: var(--bg);
+  border-radius: var(--radius);
+  padding: 16px;
+  min-height: 300px;
+}
+
+.kanban-column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--border);
+}
+
+.kanban-column-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.kanban-column-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.kanban-column-dot.amber { background: var(--amber); }
+.kanban-column-dot.blue { background: var(--accent); }
+.kanban-column-dot.green { background: var(--green); }
+
+.kanban-count {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+/* ============ TASK CARD ============ */
+.task-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition);
+  cursor: pointer;
+}
+
+.task-card:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+}
+
+.task-card.dimmed {
+  opacity: 0.65;
+}
+
+.task-card.dimmed:hover {
+  opacity: 1;
+}
+
+.task-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.task-tag.design { background: #FFF3D6; color: #B87A00; }
+.task-tag.frontend { background: #E0EAFF; color: #2D5BD6; }
+.task-tag.devops { background: #E0EAFF; color: #2D5BD6; }
+.task-tag.performance { background: #EDE4FF; color: #6D31D3; }
+.task-tag.seo { background: #EDE4FF; color: #6D31D3; }
+.task-tag.testing { background: #FFE0E0; color: #C02929; }
+.task-tag.backend { background: #E0EAFF; color: #2D5BD6; }
+.task-tag.deploy { background: #D4F5E8; color: #0B7E55; }
+.task-tag.docs { background: #D4F5E8; color: #0B7E55; }
+.task-tag.urgent { background: #FFE0E0; color: #C02929; }
+.task-tag.planning { background: #FFF3D6; color: #B87A00; }
+
+.task-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.task-progress {
+  margin-bottom: 10px;
+}
+
+.task-progress .progress-bar-track {
+  height: 4px;
+  background: var(--bg);
+}
+
+.task-progress .progress-bar-fill {
+  background: var(--accent);
+}
+
+.task-progress .progress-label {
+  font-size: 10px;
+  margin-top: 3px;
+}
+
+.task-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.task-assignee {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.task-assignee-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent-light);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.task-due {
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.task-due i {
+  font-size: 13px;
+}
+
+.task-ai-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #4F7CFF, #7C5CFF);
+  color: white;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* ============ AI PANEL ============ */
+.ai-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  height: 640px;
+  box-shadow: var(--shadow-sm);
+}
+
+.ai-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.ai-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ai-panel-title h3 {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.ai-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--green);
+  font-weight: 500;
+}
+
+.ai-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse-dot 2s ease infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.ai-panel-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.ai-action-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  font-size: 18px;
+}
+
+.ai-action-btn:hover {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.ai-chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chat-message {
+  display: flex;
+  gap: 10px;
+  max-width: 85%;
+}
+
+.chat-message.ai {
+  align-self: flex-start;
+}
+
+.chat-message.user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.chat-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.chat-avatar.ai-avatar {
+  background: linear-gradient(135deg, #4F7CFF, #7C5CFF);
+  color: white;
+}
+
+.chat-avatar.user-avatar-msg {
+  background: var(--accent);
+  color: white;
+}
+
+.chat-bubble {
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.chat-message.ai .chat-bubble {
+  background: var(--bg);
+  color: var(--text);
+  border-top-left-radius: 4px;
+}
+
+.chat-message.user .chat-bubble {
+  background: var(--accent);
+  color: white;
+  border-top-right-radius: 4px;
+}
+
+.chat-time {
+  font-size: 10px;
+  color: var(--muted-light);
+  margin-top: 4px;
+}
+
+.chat-message.user .chat-time {
+  text-align: right;
+  color: rgba(255,255,255,0.6);
+}
+
+.chat-input-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.chat-input {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+.chat-input:focus {
+  border-color: var(--accent);
+}
+
+.chat-input::placeholder {
+  color: var(--muted-light);
+}
+
+.chat-send-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+
+.chat-send-btn:hover {
+  background: var(--accent-hover);
+}
+
+.chat-send-btn i {
+  font-size: 18px;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 1200px) {
+  .detail-columns {
+    flex-direction: column;
+  }
+  .detail-sidebar {
+    width: 100%;
+    position: static;
+  }
+  .ai-panel {
+    height: 480px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 64px;
+  }
+  .sidebar-logo .logo-text,
+  .nav-item span,
+  .nav-label,
+  .user-info,
+  .sidebar-footer .user-card {
+    display: none;
+  }
+  .sidebar-logo {
+    padding: 20px 0;
+    justify-content: center;
+  }
+  .nav-item {
+    justify-content: center;
+    padding: 10px 0;
+  }
+  .sidebar-footer .user-card {
+    justify-content: center;
+    padding: 8px 0;
+  }
+  .main {
+    margin-left: 64px;
+    padding: 20px 16px;
+  }
+  .kanban-board {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .project-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ SIDEBAR ============ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-dot"></div>
+    <span class="logo-text">Pipeline</span>
+  </div>
+  <nav class="nav-section">
+    <div class="nav-label">Main</div>
+    <button class="nav-item active" data-view="projects" onclick="navigateTo('projects')">
+      <i class="ti ti-layout-kanban"></i>
+      <span>Projects</span>
+    </button>
+    <button class="nav-item" data-view="ai-sessions" onclick="navigateTo('ai-sessions')">
+      <i class="ti ti-sparkles"></i>
+      <span>AI Sessions</span>
+    </button>
+    <div class="nav-label" style="margin-top:12px">System</div>
+    <button class="nav-item" data-view="settings" onclick="navigateTo('settings')">
+      <i class="ti ti-settings"></i>
+      <span>Settings</span>
+    </button>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">U</div>
+      <div class="user-info">
+        <div class="user-name">User</div>
+        <div class="user-role">Project Manager</div>
+      </div>
+      <i class="ti ti-chevron-down" style="font-size:16px;color:var(--muted-light)"></i>
+    </div>
+  </div>
+</aside>
+
+<!-- ============ MAIN CONTENT ============ -->
+<main class="main">
+
+  <!-- ===== PROJECT LIST VIEW ===== -->
+  <div id="view-projects" class="view active">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>Projects</h1>
+        <p>Manage and monitor your active projects and their tasks</p>
+      </div>
+    </div>
+    <div class="project-grid" id="projectGrid"></div>
+  </div>
+
+  <!-- ===== PROJECT DETAIL VIEW ===== -->
+  <div id="view-project-detail" class="view">
+    <div class="breadcrumb">
+      <a onclick="navigateTo('projects')">Projects</a>
+      <span class="sep">/</span>
+      <span id="detailBreadcrumb" style="color:var(--text);font-weight:500"></span>
+    </div>
+    <div class="detail-header">
+      <h1 id="detailTitle"></h1>
+      <span class="status-badge" id="detailStatus"></span>
+    </div>
+    <div class="detail-columns">
+      <div class="detail-main">
+        <div class="kanban-board" id="kanbanBoard"></div>
+      </div>
+      <div class="detail-sidebar">
+        <div class="ai-panel">
+          <div class="ai-panel-header">
+            <div class="ai-panel-title">
+              <h3>AI Agent</h3>
+              <div class="ai-status">
+                <span class="ai-status-dot"></span>
+                Active
+              </div>
+            </div>
+            <div class="ai-panel-actions">
+              <button class="ai-action-btn" title="Refresh"><i class="ti ti-refresh"></i></button>
+              <button class="ai-action-btn" title="Settings"><i class="ti ti-dots-vertical"></i></button>
+            </div>
+          </div>
+          <div class="ai-chat" id="aiChat"></div>
+          <div class="chat-input-area">
+            <input class="chat-input" id="chatInput" type="text" placeholder="Ask the AI agent..." onkeydown="if(event.key==='Enter')sendChat()">
+            <button class="chat-send-btn" onclick="sendChat()"><i class="ti ti-send"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== AI SESSIONS VIEW (placeholder) ===== -->
+  <div id="view-ai-sessions" class="view">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>AI Sessions</h1>
+        <p>Your AI-powered planning and analysis sessions</p>
+      </div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:60px 40px;text-align:center;">
+      <i class="ti ti-sparkles" style="font-size:48px;color:var(--muted-light);margin-bottom:16px;display:block;"></i>
+      <h3 style="font-weight:600;margin-bottom:6px;color:var(--text-secondary);">No AI Sessions Yet</h3>
+      <p style="color:var(--muted);font-size:14px;">Start a new AI-powered session to analyze your projects.</p>
+    </div>
+  </div>
+
+  <!-- ===== SETTINGS VIEW (placeholder) ===== -->
+  <div id="view-settings" class="view">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>Settings</h1>
+        <p>Configure your dashboard preferences</p>
+      </div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:60px 40px;text-align:center;">
+      <i class="ti ti-settings" style="font-size:48px;color:var(--muted-light);margin-bottom:16px;display:block;"></i>
+      <h3 style="font-weight:600;margin-bottom:6px;color:var(--text-secondary);">Settings</h3>
+      <p style="color:var(--muted);font-size:14px;">Dashboard settings &amp; preferences coming soon.</p>
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* ======================================================================
+   DATA
+   ====================================================================== */
+
+const projects = [
+  {
+    id: 1,
+    title: 'Marketing Website Redesign',
+    description: 'Complete overhaul of the marketing website with modern design principles and improved performance.',
+    status: 'Active',
+    deadline: 'Jul 15, 2025',
+    stats: { planned: 2, inProgress: 2, done: 2 },
+    progress: 67,
+    columns: {
+      planned: [
+        {
+          id: 't1',
+          tag: 'design',
+          tagLabel: 'Design',
+          title: 'Homepage hero section wireframes',
+          progress: 0,
+          assignee: 'Sarah C.',
+          due: 'Jun 10',
+          ai: true
+        },
+        {
+          id: 't2',
+          tag: 'planning',
+          tagLabel: 'Planning',
+          title: 'Content inventory & audit',
+          progress: 0,
+          assignee: 'Mike R.',
+          due: 'Jun 12',
+          ai: false
+        }
+      ],
+      inProgress: [
+        {
+          id: 't3',
+          tag: 'frontend',
+          tagLabel: 'Frontend',
+          title: 'Responsive navigation component',
+          progress: 65,
+          assignee: 'Emma L.',
+          due: 'Jun 14',
+          ai: true
+        },
+        {
+          id: 't4',
+          tag: 'performance',
+          tagLabel: 'Performance',
+          title: 'Image optimization & lazy loading',
+          progress: 40,
+          assignee: 'Alex K.',
+          due: 'Jun 16',
+          ai: false
+        }
+      ],
+      done: [
+        {
+          id: 't5',
+          tag: 'design',
+          tagLabel: 'Design',
+          title: 'Color palette & typography system',
+          progress: 100,
+          assignee: 'Sarah C.',
+          due: 'Jun 3',
+          ai: true
+        },
+        {
+          id: 't6',
+          tag: 'seo',
+          tagLabel: 'SEO',
+          title: 'Meta tags & structured data setup',
+          progress: 100,
+          assignee: 'Mike R.',
+          due: 'Jun 5',
+          ai: false
+        }
+      ]
+    }
+  },
+  {
+    id: 2,
+    title: 'Mobile App API Integration',
+    description: 'Integrate third-party payment gateway and authentication APIs into the mobile application.',
+    status: 'Active',
+    deadline: 'Aug 1, 2025',
+    stats: { planned: 2, inProgress: 2, done: 1 },
+    progress: 50,
+    columns: {
+      planned: [
+        {
+          id: 't7',
+          tag: 'backend',
+          tagLabel: 'Backend',
+          title: 'Payment gateway webhook handlers',
+          progress: 0,
+          assignee: 'Jason T.',
+          due: 'Jun 20',
+          ai: false
+        },
+        {
+          id: 't8',
+          tag: 'testing',
+          tagLabel: 'Testing',
+          title: 'API endpoint test suite setup',
+          progress: 0,
+          assignee: 'Priya M.',
+          due: 'Jun 22',
+          ai: true
+        }
+      ],
+      inProgress: [
+        {
+          id: 't9',
+          tag: 'frontend',
+          tagLabel: 'Frontend',
+          title: 'OAuth 2.0 login flow UI',
+          progress: 70,
+          assignee: 'Emma L.',
+          due: 'Jun 18',
+          ai: false
+        },
+        {
+          id: 't10',
+          tag: 'backend',
+          tagLabel: 'Backend',
+          title: 'REST API rate limiting middleware',
+          progress: 45,
+          assignee: 'Jason T.',
+          due: 'Jun 21',
+          ai: true
+        }
+      ],
+      done: [
+        {
+          id: 't11',
+          tag: 'devops',
+          tagLabel: 'DevOps',
+          title: 'CI/CD pipeline for API deployment',
+          progress: 100,
+          assignee: 'Alex K.',
+          due: 'Jun 7',
+          ai: false
+        }
+      ]
+    }
+  },
+  {
+    id: 3,
+    title: 'Internal Dashboard v2',
+    description: 'Second iteration of the internal analytics dashboard with new data visualizations and reporting features.',
+    status: 'Completed',
+    deadline: 'May 30, 2025',
+    stats: { planned: 0, inProgress: 0, done: 3 },
+    progress: 100,
+    columns: {
+      planned: [],
+      inProgress: [],
+      done: [
+        {
+          id: 't12',
+          tag: 'frontend',
+          tagLabel: 'Frontend',
+          title: 'Real-time chart components with D3.js',
+          progress: 100,
+          assignee: 'Emma L.',
+          due: 'May 25',
+          ai: true
+        },
+        {
+          id: 't13',
+          tag: 'backend',
+          tagLabel: 'Backend',
+          title: 'Aggregated data query optimization',
+          progress: 100,
+          assignee: 'Jason T.',
+          due: 'May 28',
+          ai: false
+        },
+        {
+          id: 't14',
+          tag: 'testing',
+          tagLabel: 'Testing',
+          title: 'End-to-end dashboard test coverage',
+          progress: 100,
+          assignee: 'Priya M.',
+          due: 'May 30',
+          ai: false
+        }
+      ]
+    }
+  }
+];
+
+/* Default AI chat messages */
+const aiChatMessages = [
+  { role: 'ai', text: "Hello! I'm your AI project assistant. I can help you break down tasks, estimate effort, or suggest next steps for your project.", time: '10:32 AM' },
+  { role: 'user', text: 'What should we prioritize next on this project?', time: '10:33 AM' },
+  { role: 'ai', text: "Based on the current data, I'd recommend focusing on the **In Progress** tasks first — particularly those closest to their deadline. The responsive navigation component (due Jun 14) and image optimization (due Jun 16) are your next critical items.", time: '10:33 AM' },
+  { role: 'user', text: 'Can you suggest subtasks for the image optimization task?', time: '10:34 AM' },
+  { role: 'ai', text: 'Sure! Here are some suggested subtasks:\n\n1. **Audit** current image sizes & formats\n2. **Convert** to modern formats (WebP/AVIF)\n3. **Implement** responsive srcset attributes\n4. **Add** lazy loading with Intersection Observer\n5. **Test** performance improvement with Lighthouse', time: '10:34 AM' }
+];
+
+/* ======================================================================
+   RENDERING
+   ====================================================================== */
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function renderProjectCard(project) {
+  const statusClass = project.status === 'Active' ? 'active' : 'completed';
+  const progressFillClass = project.progress === 100 ? 'completed' : 'active';
+  return `
+    <div class="project-card" onclick="openProjectDetail(${project.id})">
+      <div class="project-card-header">
+        <div class="project-card-title">${escapeHtml(project.title)}</div>
+        <span class="status-badge ${statusClass}"><span class="status-dot"></span>${escapeHtml(project.status)}</span>
+      </div>
+      <div class="project-card-desc">${escapeHtml(project.description)}</div>
+      <div class="project-stats">
+        <div class="stat-item"><span class="stat-dot amber"></span><span class="count">${project.stats.planned}</span> Planned</div>
+        <div class="stat-item"><span class="stat-dot blue"></span><span class="count">${project.stats.inProgress}</span> In Progress</div>
+        <div class="stat-item"><span class="stat-dot green"></span><span class="count">${project.stats.done}</span> Done</div>
+      </div>
+      <div class="progress-bar-wrapper">
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill ${progressFillClass}" style="width:${project.progress}%"></div>
+        </div>
+        <div class="progress-label">
+          <span>${project.progress}% complete</span>
+          <span>${escapeHtml(project.deadline)}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderTaskCard(task, dimmed) {
+  const dimClass = dimmed ? 'dimmed' : '';
+  const tagClass = task.tag ? task.tag.toLowerCase() : '';
+  const aiBadge = task.ai ? '<span class="task-ai-badge"><i class="ti ti-sparkles" style="font-size:10px"></i> AI</span>' : '';
+  const progress = task.progress;
+  const progressLabel = progress === 100 ? 'Complete' : progress + '%';
+  return `
+    <div class="task-card ${dimClass}">
+      <span class="task-tag ${tagClass}">${escapeHtml(task.tagLabel)}${aiBadge}</span>
+      <div class="task-title">${escapeHtml(task.title)}</div>
+      <div class="task-progress">
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" style="width:${progress}%;background:${progress === 100 ? 'var(--green)' : 'var(--accent)'}"></div>
+        </div>
+        <div class="progress-label">
+          <span>${progressLabel}</span>
+        </div>
+      </div>
+      <div class="task-footer">
+        <div class="task-assignee">
+          <div class="task-assignee-avatar">${task.assignee.charAt(0)}</div>
+          ${escapeHtml(task.assignee)}
+        </div>
+        <div class="task-due">
+          <i class="ti ti-calendar-event"></i>
+          ${escapeHtml(task.due)}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderKanban(project) {
+  const cols = project.columns;
+  const colConfig = [
+    { key: 'planned', label: 'Planned', dotClass: 'amber', dimmed: false },
+    { key: 'inProgress', label: 'In Progress', dotClass: 'blue', dimmed: false },
+    { key: 'done', label: 'Done', dotClass: 'green', dimmed: true }
+  ];
+
+  let html = '';
+  for (const col of colConfig) {
+    const tasks = cols[col.key] || [];
+    html += `
+      <div class="kanban-column">
+        <div class="kanban-column-header">
+          <div class="kanban-column-title">
+            <span class="kanban-column-dot ${col.dotClass}"></span>
+            ${col.label}
+          </div>
+          <span class="kanban-count">${tasks.length}</span>
+        </div>
+        ${tasks.map(t => renderTaskCard(t, col.dimmed && t.progress === 100)).join('')}
+      </div>
+    `;
+  }
+  return html;
+}
+
+function renderProjectList() {
+  const grid = document.getElementById('projectGrid');
+  grid.innerHTML = projects.map(p => renderProjectCard(p)).join('');
+}
+
+function renderAiChat() {
+  const container = document.getElementById('aiChat');
+  container.innerHTML = aiChatMessages.map(msg => `
+    <div class="chat-message ${msg.role}">
+      <div class="chat-avatar ${msg.role === 'ai' ? 'ai-avatar' : 'user-avatar-msg'}">${msg.role === 'ai' ? 'AI' : 'U'}</div>
+      <div>
+        <div class="chat-bubble">${msg.text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>
+        <div class="chat-time">${msg.time}</div>
+      </div>
+    </div>
+  `).join('');
+  container.scrollTop = container.scrollHeight;
+}
+
+/* ======================================================================
+   NAVIGATION
+   ====================================================================== */
+
+function navigateTo(view) {
+  // Update nav active state
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const navBtn = document.querySelector(`.nav-item[data-view="${view}"]`);
+  if (navBtn) navBtn.classList.add('active');
+
+  // Show target view
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  const targetView = document.getElementById('view-' + view);
+  if (targetView) targetView.classList.add('active');
+}
+
+let currentProjectId = null;
+
+function openProjectDetail(projectId) {
+  const project = projects.find(p => p.id === projectId);
+  if (!project) return;
+
+  currentProjectId = projectId;
+
+  // Update nav
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const projectsNav = document.querySelector('.nav-item[data-view="projects"]');
+  if (projectsNav) projectsNav.classList.add('active');
+
+  // Switch view
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-project-detail').classList.add('active');
+
+  // Fill data
+  document.getElementById('detailBreadcrumb').textContent = project.title;
+  document.getElementById('detailTitle').textContent = project.title;
+  const statusEl = document.getElementById('detailStatus');
+  const statusClass = project.status === 'Active' ? 'active' : 'completed';
+  statusEl.className = 'status-badge ' + statusClass;
+  statusEl.innerHTML = `<span class="status-dot"></span>${project.status}`;
+
+  // Render kanban
+  document.getElementById('kanbanBoard').innerHTML = renderKanban(project);
+
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ======================================================================
+   CHAT
+   ====================================================================== */
+
+function sendChat() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  const container = document.getElementById('aiChat');
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  // Add user message
+  const userMsg = document.createElement('div');
+  userMsg.className = 'chat-message user';
+  userMsg.innerHTML = `
+    <div class="chat-avatar user-avatar-msg">U</div>
+    <div>
+      <div class="chat-bubble">${escapeHtml(text)}</div>
+      <div class="chat-time">${timeStr}</div>
+    </div>
+  `;
+  container.appendChild(userMsg);
+  container.scrollTop = container.scrollHeight;
+
+  input.value = '';
+
+  // Simulate AI response after short delay
+  setTimeout(() => {
+    const aiReplies = [
+      "I'll analyze that and get back to you with some suggestions shortly.",
+      "Great question! Based on the project data, here are my recommendations...",
+      "Let me think about that. Have you considered using the AI task breakdown feature?",
+      "I can help with that. Would you like me to generate a list of subtasks?",
+      "Looking at the current sprint velocity, I'd suggest adjusting the timeline slightly."
+    ];
+    const reply = aiReplies[Math.floor(Math.random() * aiReplies.length)];
+    const aiTime = new Date();
+    const aiTimeStr = aiTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    const aiMsg = document.createElement('div');
+    aiMsg.className = 'chat-message ai';
+    aiMsg.innerHTML = `
+      <div class="chat-avatar ai-avatar">AI</div>
+      <div>
+        <div class="chat-bubble">${reply}</div>
+        <div class="chat-time">${aiTimeStr}</div>
+      </div>
+    `;
+    container.appendChild(aiMsg);
+    container.scrollTop = container.scrollHeight;
+  }, 600 + Math.random() * 600);
+}
+
+/* ======================================================================
+   INIT
+   ====================================================================== */
+
+document.addEventListener('DOMContentLoaded', function() {
+  renderProjectList();
+  renderAiChat();
+});
+</script>
+</body>
+</html>

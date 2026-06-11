@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pipeline — AI Project Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  :root {
+    --bg-deep: #08090a;
+    --bg-panel: #0f1011;
+    --bg-surface: #191a1b;
+    --bg-surface-hover: #1e1f21;
+    --bg-elevated: #222326;
+    --bg-card: rgba(255,255,255,0.02);
+    --bg-card-hover: rgba(255,255,255,0.04);
+    --bg-input: rgba(255,255,255,0.02);
+    
+    --text-primary: #f7f8f8;
+    --text-secondary: #d0d6e0;
+    --text-tertiary: #8a8f98;
+    --text-quaternary: #62666d;
+    
+    --accent-indigo: #5e6ad2;
+    --accent-violet: #7170ff;
+    --accent-hover: #828fff;
+    
+    --border-subtle: rgba(255,255,255,0.05);
+    --border-standard: rgba(255,255,255,0.08);
+    --border-solid: #23252a;
+    
+    --green: #10b981;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --blue: #3b82f6;
+    --purple: #8b5cf6;
+    
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    --radius-xl: 12px;
+    
+    --sidebar-w: 240px;
+    --topbar-h: 52px;
+    
+    --transition: 0.15s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  html, body { height: 100%; font-family: 'Inter', system-ui, -apple-system, sans-serif; font-feature-settings: 'cv01', 'ss03'; background: var(--bg-deep); color: var(--text-primary); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+
+  /* Layout */
+  .app { display: flex; height: 100vh; }
+  
+  /* Sidebar */
+  .sidebar { width: var(--sidebar-w); background: var(--bg-panel); border-right: 1px solid var(--border-subtle); display: flex; flex-direction: column; flex-shrink: 0; }
+  .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 16px 20px; border-bottom: 1px solid var(--border-subtle); }
+  .sidebar-logo svg { width: 20px; height: 20px; }
+  .sidebar-logo span { font-size: 16px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.3px; }
+  .sidebar-nav { flex: 1; padding: 8px; display: flex; flex-direction: column; gap: 2px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: var(--radius-md); color: var(--text-tertiary); cursor: pointer; transition: var(--transition); font-size: 13.5px; font-weight: 500; text-decoration: none; }
+  .nav-item:hover { background: var(--bg-surface); color: var(--text-secondary); }
+  .nav-item.active { background: var(--bg-surface); color: var(--text-primary); }
+  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; opacity: 0.6; }
+  .nav-item.active svg { opacity: 1; color: var(--accent-violet); }
+  .nav-section { padding: 12px 12px 4px; font-size: 11px; font-weight: 500; color: var(--text-quaternary); text-transform: uppercase; letter-spacing: 0.5px; }
+  .sidebar-bottom { padding: 8px; border-top: 1px solid var(--border-subtle); }
+  .user-card { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: var(--radius-md); cursor: pointer; transition: var(--transition); }
+  .user-card:hover { background: var(--bg-surface); }
+  .user-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--accent-indigo); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: white; flex-shrink: 0; }
+  .user-info { flex: 1; min-width: 0; }
+  .user-name { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+  .user-role { font-size: 11px; color: var(--text-quaternary); }
+
+  /* Main */
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+  
+  /* Top Bar */
+  .topbar { height: var(--topbar-h); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; border-bottom: 1px solid var(--border-subtle); flex-shrink: 0; }
+  .topbar-left { display: flex; align-items: center; gap: 16px; }
+  .topbar-title { font-size: 15px; font-weight: 510; color: var(--text-primary); }
+  .topbar-actions { display: flex; align-items: center; gap: 8px; }
+  .topbar-btn { width: 32px; height: 32px; border-radius: var(--radius-md); border: 1px solid var(--border-standard); background: var(--bg-card); color: var(--text-tertiary); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+  .topbar-btn:hover { background: var(--bg-surface); color: var(--text-secondary); }
+  .topbar-btn svg { width: 16px; height: 16px; }
+
+  /* Content */
+  .content { flex: 1; overflow-y: auto; padding: 24px; }
+  .content::-webkit-scrollbar { width: 6px; }
+  .content::-webkit-scrollbar-track { background: transparent; }
+  .content::-webkit-scrollbar-thumb { background: var(--border-solid); border-radius: 3px; }
+
+  /* Page Header */
+  .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .page-header h1 { font-size: 20px; font-weight: 590; color: var(--text-primary); letter-spacing: -0.24px; }
+  .page-header p { font-size: 14px; color: var(--text-tertiary); margin-top: 4px; }
+  .btn-primary { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: var(--accent-indigo); color: white; border: none; border-radius: var(--radius-md); font-size: 13px; font-weight: 510; cursor: pointer; transition: var(--transition); font-family: inherit; }
+  .btn-primary:hover { background: var(--accent-violet); }
+  .btn-ghost { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border-standard); border-radius: var(--radius-md); font-size: 13px; font-weight: 500; cursor: pointer; transition: var(--transition); font-family: inherit; }
+  .btn-ghost:hover { background: var(--bg-surface); color: var(--text-primary); }
+  .btn-ghost svg { width: 14px; height: 14px; }
+
+  /* KPI Cards */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+  .kpi-card { background: var(--bg-card); border: 1px solid var(--border-standard); border-radius: var(--radius-lg); padding: 16px; transition: var(--transition); position: relative; overflow: hidden; }
+  .kpi-card:hover { background: var(--bg-card-hover); }
+  .kpi-card.featured { background: linear-gradient(135deg, rgba(94,106,210,0.08), rgba(113,112,255,0.04)); border-color: rgba(94,106,210,0.2); }
+  .kpi-card.featured .kpi-value { color: var(--accent-violet); }
+  .kpi-label { font-size: 12px; font-weight: 500; color: var(--text-quaternary); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .kpi-row { display: flex; align-items: flex-end; justify-content: space-between; }
+  .kpi-value { font-size: 28px; font-weight: 590; color: var(--text-primary); letter-spacing: -0.5px; line-height: 1; }
+  .kpi-trend { display: inline-flex; align-items: center; gap: 3px; font-size: 12px; font-weight: 500; margin-left: 8px; }
+  .kpi-trend.up { color: var(--green); }
+  .kpi-trend.down { color: var(--red); }
+  .kpi-chart { height: 32px; margin-top: 8px; display: flex; align-items: flex-end; gap: 2px; }
+  .kpi-bar { width: 4px; border-radius: 2px; background: var(--accent-indigo); opacity: 0.3; transition: var(--transition); }
+  .kpi-bar.active { opacity: 0.8; }
+  .kpi-card.featured .kpi-bar { background: var(--accent-violet); }
+
+  /* Section */
+  .section { margin-bottom: 24px; }
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .section-header h2 { font-size: 15px; font-weight: 590; color: var(--text-primary); }
+  .section-header .count { font-size: 12px; color: var(--text-quaternary); font-weight: 400; margin-left: 6px; }
+
+  /* Kanban Board */
+  .kanban { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .kanban-col { background: var(--bg-card); border: 1px solid var(--border-standard); border-radius: var(--radius-lg); padding: 12px; min-height: 320px; }
+  .kanban-col-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border-subtle); }
+  .kanban-col-title { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 590; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px; }
+  .kanban-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .kanban-count { font-size: 12px; color: var(--text-quaternary); font-weight: 400; }
+  
+  .task-card { background: var(--bg-surface); border: 1px solid var(--border-standard); border-radius: var(--radius-md); padding: 12px; margin-bottom: 8px; cursor: pointer; transition: var(--transition); }
+  .task-card:hover { border-color: rgba(255,255,255,0.15); background: var(--bg-surface-hover); }
+  .task-card.done { opacity: 0.55; }
+  .task-card.done:hover { opacity: 0.8; }
+  .task-tags { display: flex; gap: 4px; margin-bottom: 8px; flex-wrap: wrap; }
+  .task-tag { font-size: 10.5px; font-weight: 510; padding: 2px 6px; border-radius: 9999px; letter-spacing: 0.2px; text-transform: uppercase; }
+  .task-tag.tag-design { background: rgba(139,92,246,0.15); color: #a78bfa; }
+  .task-tag.tag-frontend { background: rgba(59,130,246,0.15); color: #60a5fa; }
+  .task-tag.tag-backend { background: rgba(94,106,210,0.15); color: #818cf8; }
+  .task-tag.tag-devops { background: rgba(16,185,129,0.15); color: #34d399; }
+  .task-tag.tag-security { background: rgba(239,68,68,0.15); color: #f87171; }
+  .task-tag.tag-testing { background: rgba(245,158,11,0.15); color: #fbbf24; }
+  .task-tag.tag-seo { background: rgba(99,102,241,0.15); color: #818cf8; }
+  .task-tag.tag-docs { background: rgba(107,114,128,0.15); color: #9ca3af; }
+  .task-title { font-size: 13.5px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px; line-height: 1.4; }
+  .task-progress { height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; margin-bottom: 8px; overflow: hidden; }
+  .task-progress-fill { height: 100%; border-radius: 2px; background: var(--accent-indigo); transition: width 0.3s ease; }
+  .task-footer { display: flex; align-items: center; justify-content: space-between; }
+  .task-assignees { display: flex; }
+  .task-avatar { width: 20px; height: 20px; border-radius: 50%; font-size: 9px; font-weight: 600; display: flex; align-items: center; justify-content: center; border: 2px solid var(--bg-surface); margin-right: -4px; }
+  .task-avatar:first-child { margin-left: 0; }
+  .task-meta { display: flex; align-items: center; gap: 6px; }
+  .task-meta svg { width: 12px; height: 12px; opacity: 0.4; }
+  .task-meta span { font-size: 11px; color: var(--text-quaternary); }
+  .task-ai-badge { font-size: 9px; font-weight: 600; padding: 1px 5px; border-radius: 2px; background: rgba(94,106,210,0.2); color: var(--accent-violet); text-transform: uppercase; letter-spacing: 0.3px; margin-left: 6px; }
+
+  /* Timeline Section */
+  .timeline { background: var(--bg-card); border: 1px solid var(--border-standard); border-radius: var(--radius-lg); padding: 16px; }
+  .timeline-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .timeline-header h3 { font-size: 14px; font-weight: 590; color: var(--text-primary); }
+  .timeline-months { display: grid; grid-template-columns: repeat(6, 1fr); margin-bottom: 8px; }
+  .timeline-month { font-size: 11px; color: var(--text-quaternary); text-align: center; }
+  .timeline-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border-subtle); }
+  .timeline-row:last-child { border-bottom: none; }
+  .timeline-project { width: 160px; flex-shrink: 0; }
+  .timeline-project-name { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+  .timeline-project-status { font-size: 11px; color: var(--text-quaternary); }
+  .timeline-bar-wrapper { flex: 1; height: 24px; position: relative; }
+  .timeline-bar { position: absolute; height: 20px; top: 2px; border-radius: 4px; display: flex; align-items: center; padding: 0 8px; font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.9); transition: var(--transition); cursor: pointer; }
+  .timeline-bar:hover { filter: brightness(1.2); }
+  .timeline-bar.active { background: var(--accent-indigo); }
+  .timeline-bar.completed { background: var(--green); }
+  .timeline-bar.planning { background: var(--amber); }
+  .timeline-bar.engineering { background: var(--blue); }
+
+  /* Activity Feed */
+  .activity-list { display: flex; flex-direction: column; gap: 4px; }
+  .activity-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px; border-radius: var(--radius-md); transition: var(--transition); }
+  .activity-item:hover { background: var(--bg-card-hover); }
+  .activity-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px; }
+  .activity-icon.create { background: rgba(16,185,129,0.15); }
+  .activity-icon.update { background: rgba(59,130,246,0.15); }
+  .activity-icon.complete { background: rgba(94,106,210,0.15); }
+  .activity-icon.comment { background: rgba(245,158,11,0.15); }
+  .activity-content { flex: 1; min-width: 0; }
+  .activity-text { font-size: 13px; color: var(--text-secondary); }
+  .activity-text strong { color: var(--text-primary); font-weight: 510; }
+  .activity-time { font-size: 11px; color: var(--text-quaternary); margin-top: 2px; }
+
+  /* Project Selector */
+  .project-selector { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+  .project-chip { padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 500; border: 1px solid var(--border-solid); background: transparent; color: var(--text-tertiary); cursor: pointer; transition: var(--transition); font-family: inherit; }
+  .project-chip:hover { border-color: rgba(255,255,255,0.15); color: var(--text-secondary); }
+  .project-chip.active { background: var(--accent-indigo); border-color: var(--accent-indigo); color: white; }
+
+  /* Empty State */
+  .empty-state { text-align: center; padding: 48px 24px; }
+  .empty-state svg { width: 48px; height: 48px; opacity: 0.2; margin-bottom: 16px; }
+  .empty-state h3 { font-size: 16px; font-weight: 500; color: var(--text-tertiary); margin-bottom: 8px; }
+  .empty-state p { font-size: 13px; color: var(--text-quaternary); }
+
+  /* Responsive */
+  @media (max-width: 1200px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } .kanban { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 900px) { .sidebar { width: 64px; } .sidebar-logo span, .nav-item span, .nav-section, .user-info { display: none; } .sidebar-logo { justify-content: center; } .nav-item { justify-content: center; padding: 10px; } .user-card { justify-content: center; }}
+  @media (max-width: 640px) { .kpi-grid { grid-template-columns: 1fr; } .kanban { grid-template-columns: 1fr; } .content { padding: 16px; } .topbar { padding: 0 16px; }}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <svg viewBox="0 0 20 20" fill="none">
+        <rect x="2" y="2" width="16" height="16" rx="4" stroke="#7170ff" stroke-width="2"/>
+        <path d="M6 10l3 3 5-6" stroke="#7170ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Pipeline</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Main</div>
+      <a class="nav-item active" href="#" data-view="dashboard">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a class="nav-item" href="#" data-view="projects">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="14" height="10" rx="1.5"/><path d="M1 7h14"/><path d="M5 3V1.5A.5.5 0 015.5 1h5a.5.5 0 01.5.5V3"/></svg>
+        <span>Projects</span>
+      </a>
+      <a class="nav-item" href="#" data-view="ai">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41"/></svg>
+        <span>AI Agents</span>
+      </a>
+      <a class="nav-item" href="#" data-view="timeline">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 8h13"/><circle cx="4" cy="8" r="1.5" fill="currentColor"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><circle cx="12" cy="8" r="1.5" fill="currentColor"/></svg>
+        <span>Timeline</span>
+      </a>
+      <div class="nav-section">Workspace</div>
+      <a class="nav-item" href="#" data-view="docs">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2h8a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z"/><path d="M6 5h4M6 8h4M6 11h2"/></svg>
+        <span>Documents</span>
+      </a>
+      <a class="nav-item" href="#" data-view="settings">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="8" r="2.5"/><path d="M8 1.5v1M8 13.5v1M1.5 8h1M13.5 8h1M3.52 3.52l.7.7M11.78 11.78l.7.7M3.52 12.48l.7-.7M11.78 4.22l.7-.7"/></svg>
+        <span>Settings</span>
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="user-card">
+        <div class="user-avatar">F</div>
+        <div class="user-info">
+          <div class="user-name">Fadzly</div>
+          <div class="user-role">Project Manager</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="topbar-title">Dashboard</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="topbar-btn" title="Notifications">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 1.5A5.5 5.5 0 002.5 7v2.5l-1 2h13l-1-2V7A5.5 5.5 0 008 1.5z"/><path d="M6 12.5a2 2 0 004 0"/></svg>
+        </button>
+        <button class="topbar-btn" title="Search">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M13 13l-3-3"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="content" id="app-content">
+      <!-- Dashboard View -->
+      <div id="view-dashboard" class="view active">
+        <div class="page-header">
+          <div>
+            <h1>Dashboard</h1>
+            <p>Overview of your project management workspace</p>
+          </div>
+          <button class="btn-primary" onclick="showNewProject()">+ New Project</button>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid" id="kpi-grid"></div>
+
+        <!-- Project Selector -->
+        <div class="project-selector" id="project-selector"></div>
+
+        <!-- Kanban Board -->
+        <div class="section">
+          <div class="section-header">
+            <h2>Board <span class="count" id="task-count"></span></h2>
+            <button class="btn-ghost" onclick="alert('AI Sprint Generator coming soon!')">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41"/></svg>
+              AI Sprint
+            </button>
+          </div>
+          <div class="kanban" id="kanban-board"></div>
+        </div>
+
+        <!-- Timeline + Activity Side by Side -->
+        <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:24px;">
+          <div class="section">
+            <div class="section-header">
+              <h2>Timeline</h2>
+            </div>
+            <div class="timeline" id="timeline-view"></div>
+          </div>
+          <div class="section">
+            <div class="section-header">
+              <h2>Recent Activity</h2>
+            </div>
+            <div class="activity-list" id="activity-feed"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+const PROJECTS = [
+  { id: 'p1', name: 'Marketing Website Redesign', description: 'Complete overhaul of the company marketing site with modern design', status: 'active', created: '2026-05-15', due: '2026-07-30', start: 'May', months: 3 },
+  { id: 'p2', name: 'Mobile App API Integration', description: 'Build and integrate REST APIs for mobile application launch', status: 'active', created: '2026-05-20', due: '2026-08-15', start: 'May', months: 3 },
+  { id: 'p3', name: 'Internal Dashboard v2', description: 'Upgrade analytics dashboard with real-time data and visualizations', status: 'completed', created: '2026-04-01', due: '2026-06-01', start: 'Apr', months: 2 },
+  { id: 'p4', name: 'E-Commerce Platform', description: 'Full-featured online store with payment integration', status: 'active', created: '2026-06-01', due: '2026-09-30', start: 'Jun', months: 4 },
+  { id: 'p5', name: 'Mobile Banking App', description: 'Secure mobile banking application with transaction tracking', status: 'active', created: '2026-06-05', due: '2026-10-31', start: 'Jun', months: 5 },
+];
+
+const TASKS = [
+  // Marketing Website Redesign
+  { id: 't1', project: 'p1', title: 'Design hero section mockups', tag: 'design', status: 'done', progress: 100, assignees: ['AL'], due: 'Jun 3', ai: false },
+  { id: 't2', project: 'p1', title: 'Set up CI/CD pipeline', tag: 'devops', status: 'done', progress: 100, assignees: ['BO'], due: 'Jun 5', ai: false },
+  { id: 't3', project: 'p1', title: 'Implement responsive navigation', tag: 'frontend', status: 'in_progress', progress: 65, assignees: ['CH'], due: 'Jun 12', ai: true },
+  { id: 't4', project: 'p1', title: 'Optimize image loading', tag: 'performance', status: 'in_progress', progress: 30, assignees: ['AL'], due: 'Jun 15', ai: false },
+  { id: 't5', project: 'p1', title: 'Create contact form component', tag: 'frontend', status: 'backlog', progress: 0, assignees: ['CH'], due: 'Jun 20', ai: true },
+  { id: 't6', project: 'p1', title: 'Write SEO meta tags', tag: 'seo', status: 'review', progress: 90, assignees: ['DI'], due: 'Jun 8', ai: false },
+  // Mobile App API
+  { id: 't7', project: 'p2', title: 'Define API endpoints specification', tag: 'backend', status: 'done', progress: 100, assignees: ['BO'], due: 'Jun 2', ai: false },
+  { id: 't8', project: 'p2', title: 'Implement auth middleware', tag: 'security', status: 'in_progress', progress: 50, assignees: ['BO'], due: 'Jun 14', ai: true },
+  { id: 't9', project: 'p2', title: 'Create user CRUD endpoints', tag: 'backend', status: 'in_progress', progress: 75, assignees: ['EV'], due: 'Jun 16', ai: false },
+  { id: 't10', project: 'p2', title: 'Write API integration tests', tag: 'testing', status: 'backlog', progress: 0, assignees: ['FR'], due: 'Jun 25', ai: false },
+  { id: 't11', project: 'p2', title: 'Set up rate limiting', tag: 'security', status: 'done', progress: 100, assignees: ['BO'], due: 'Jun 1', ai: false },
+  // Internal Dashboard v2
+  { id: 't12', project: 'p3', title: 'Implement data visualization charts', tag: 'frontend', status: 'done', progress: 100, assignees: ['CH'], due: 'May 20', ai: false },
+  { id: 't13', project: 'p3', title: 'Build export to CSV feature', tag: 'backend', status: 'done', progress: 100, assignees: ['AL'], due: 'May 25', ai: false },
+  { id: 't14', project: 'p3', title: 'User permission system', tag: 'security', status: 'done', progress: 100, assignees: ['BO'], due: 'Jun 1', ai: false },
+  // E-Commerce
+  { id: 't15', project: 'p4', title: 'Design product listing page', tag: 'design', status: 'backlog', progress: 0, assignees: ['AL'], due: 'Jun 20', ai: true },
+  { id: 't16', project: 'p4', title: 'Implement shopping cart', tag: 'frontend', status: 'in_progress', progress: 40, assignees: ['CH'], due: 'Jun 18', ai: false },
+  { id: 't17', project: 'p4', title: 'Set up payment gateway', tag: 'backend', status: 'backlog', progress: 0, assignees: ['BO'], due: 'Jun 28', ai: true },
+  { id: 't18', project: 'p4', title: 'Build order management system', tag: 'backend', status: 'backlog', progress: 0, assignees: ['EV'], due: 'Jul 5', ai: false },
+  // Mobile Banking
+  { id: 't19', project: 'p5', title: 'Design login & registration flow', tag: 'design', status: 'backlog', progress: 0, assignees: ['AL'], due: 'Jun 22', ai: true },
+  { id: 't20', project: 'p5', title: 'Implement biometric auth', tag: 'security', status: 'backlog', progress: 0, assignees: ['BO'], due: 'Jun 25', ai: true },
+  { id: 't21', project: 'p5', title: 'Build transaction history screen', tag: 'frontend', status: 'backlog', progress: 0, assignees: ['CH'], due: 'Jun 30', ai: false },
+  { id: 't22', project: 'p5', title: 'Set up push notifications', tag: 'backend', status: 'backlog', progress: 0, assignees: ['FR'], due: 'Jul 3', ai: false },
+  { id: 't23', project: 'p5', title: 'Create fund transfer feature', tag: 'frontend', status: 'backlog', progress: 0, assignees: ['EV'], due: 'Jul 10', ai: true },
+];
+
+const ACTIVITIES = [
+  { type: 'complete', text: '<strong>Charlie</strong> completed <strong>Create contact form</strong>', time: '2 hours ago' },
+  { type: 'update', text: '<strong>Bob</strong> updated <strong>Auth middleware</strong> to 50%', time: '4 hours ago' },
+  { type: 'create', text: '<strong>Alice</strong> created <strong>Product listing page</strong>', time: '6 hours ago' },
+  { type: 'comment', text: '<strong>Eve</strong> commented on <strong>User CRUD endpoints</strong>', time: '8 hours ago' },
+  { type: 'complete', text: '<strong>Diana</strong> completed <strong>SEO meta tags</strong>', time: '1 day ago' },
+  { type: 'create', text: '<strong>AI Agent</strong> generated sprint plan for <strong>E-Commerce</strong>', time: '1 day ago', icon: 'create' },
+  { type: 'update', text: '<strong>Fadzly</strong> changed <strong>Dashboard v2</strong> status to Completed', time: '2 days ago' },
+  { type: 'complete', text: '<strong>Charlie</strong> completed <strong>Data visualization charts</strong>', time: '3 days ago' },
+];
+
+const COLORS = ['AL','BO','CH','DI','EV','FR'];
+const COLOR_MAP = { AL:'#7170ff', BO:'#10b981', CH:'#3b82f6', DI:'#f59e0b', EV:'#ef4444', FR:'#8b5cf6' };
+
+const TAG_MAP = {
+  design: { label: 'Design', cls: 'tag-design' },
+  frontend: { label: 'Frontend', cls: 'tag-frontend' },
+  backend: { label: 'Backend', cls: 'tag-backend' },
+  devops: { label: 'DevOps', cls: 'tag-devops' },
+  security: { label: 'Security', cls: 'tag-security' },
+  testing: { label: 'Testing', cls: 'tag-testing' },
+  seo: { label: 'SEO', cls: 'tag-seo' },
+  performance: { label: 'Performance', cls: 'tag-docs' },
+  docs: { label: 'Docs', cls: 'tag-docs' },
+};
+
+// ===== RENDER =====
+let currentProject = 'p1';
+
+function getTasks(projectId, status) {
+  return TASKS.filter(t => t.project === projectId && t.status === status);
+}
+
+function getProjectTasks(projectId) {
+  return TASKS.filter(t => t.project === projectId);
+}
+
+function renderKPI() {
+  const all = getProjectTasks(currentProject);
+  const done = all.filter(t => t.status === 'done');
+  const inProg = all.filter(t => t.status === 'in_progress');
+  const proj = PROJECTS.find(p => p.id === currentProject);
+  const total = PROJECTS.length;
+
+  document.getElementById('kpi-grid').innerHTML = `
+    <div class="kpi-card featured">
+      <div class="kpi-label">Active Projects</div>
+      <div class="kpi-row">
+        <span class="kpi-value">${total}</span>
+        <span class="kpi-trend up">+2 this month</span>
+      </div>
+      <div class="kpi-chart">${[40,55,70,45,85,60,75,90,65,80,95,70].map((h,i) => `<div class="kpi-bar ${i>6?'active':''}" style="height:${h*0.28}px"></div>`).join('')}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Tasks Due</div>
+      <div class="kpi-row">
+        <span class="kpi-value">${all.filter(t => t.status !== 'done').length}</span>
+        <span class="kpi-trend down">${all.filter(t => t.status === 'backlog').length} backlog</span>
+      </div>
+      <div class="kpi-chart">${[30,45,60,35,50,70,40,55,80,45,60,50].map((h,i) => `<div class="kpi-bar ${i>6?'active':''}" style="height:${h*0.28}px"></div>`).join('')}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Completion Rate</div>
+      <div class="kpi-row">
+        <span class="kpi-value">${all.length ? Math.round(done.length/all.length*100) : 0}%</span>
+        <span class="kpi-trend up">${done.length}/${all.length} done</span>
+      </div>
+      <div class="kpi-chart">${[20,35,50,40,60,45,55,70,65,80,75,85].map((h,i) => `<div class="kpi-bar ${i>6?'active':''}" style="height:${h*0.28}px"></div>`).join('')}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Team Members</div>
+      <div class="kpi-row">
+        <span class="kpi-value">6</span>
+        <span class="kpi-trend up">All active</span>
+      </div>
+      <div class="kpi-chart">${[60,60,60,60,60,60,60,60,60,60,60,60].map((h,i) => `<div class="kpi-bar ${i>6?'active':''}" style="height:${h*0.28}px"></div>`).join('')}</div>
+    </div>
+  `;
+}
+
+function renderProjectSelector() {
+  document.getElementById('project-selector').innerHTML = PROJECTS.map(p => `
+    <button class="project-chip ${p.id === currentProject ? 'active' : ''}" onclick="switchProject('${p.id}')">${p.name}</button>
+  `).join('');
+}
+
+function renderKanban() {
+  const columns = [
+    { id: 'backlog', label: 'Backlog', color: '#8a8f98' },
+    { id: 'in_progress', label: 'In Progress', color: '#3b82f6' },
+    { id: 'review', label: 'Review', color: '#f59e0b' },
+    { id: 'done', label: 'Done', color: '#10b981' },
+  ];
+
+  const allTasks = getProjectTasks(currentProject);
+  const doneCount = allTasks.filter(t => t.status === 'done').length;
+  document.getElementById('task-count').textContent = `${doneCount}/${allTasks.length}`;
+
+  document.getElementById('kanban-board').innerHTML = columns.map(col => {
+    const tasks = getTasks(currentProject, col.id);
+    return `
+      <div class="kanban-col">
+        <div class="kanban-col-header">
+          <div class="kanban-col-title">
+            <div class="kanban-dot" style="background:${col.color}"></div>
+            ${col.label}
+          </div>
+          <span class="kanban-count">${tasks.length}</span>
+        </div>
+        ${tasks.length ? tasks.map(t => renderTaskCard(t)).join('') : '<div class="empty-state" style="padding:24px 12px"><p style="font-size:12px;color:var(--text-quaternary)">No tasks</p></div>'}
+      </div>
+    `;
+  }).join('');
+}
+
+function renderTaskCard(t) {
+  const tag = TAG_MAP[t.tag] || { label: t.tag, cls: 'tag-docs' };
+  const avatars = t.assignees ? t.assignees.map(a => `<div class="task-avatar" style="background:${COLOR_MAP[a]||'#7170ff'}">${a}</div>`).join('') : '';
+  return `
+    <div class="task-card ${t.status === 'done' ? 'done' : ''}">
+      <div class="task-tags">
+        <span class="task-tag ${tag.cls}">${tag.label}</span>
+        ${t.ai ? '<span class="task-ai-badge">AI</span>' : ''}
+      </div>
+      <div class="task-title">${t.title}</div>
+      ${t.progress > 0 ? `<div class="task-progress"><div class="task-progress-fill" style="width:${t.progress}%"></div></div>` : ''}
+      <div class="task-footer">
+        <div class="task-assignees">${avatars}</div>
+        <div class="task-meta">
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><circle cx="6" cy="6" r="4.5"/><path d="M6 3.5V6l2 1"/></svg>
+          <span>${t.due}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderTimeline() {
+  const months = ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'];
+  const monthMap = { 'May':0, 'Jun':1, 'Jul':2, 'Aug':3, 'Sep':4, 'Oct':5 };
+
+  document.getElementById('timeline-view').innerHTML = `
+    <div class="timeline-header">
+      <h3>Project Timeline</h3>
+      <span style="font-size:11px;color:var(--text-quaternary)">${new Date().toLocaleDateString('en-US', { month:'short', year:'numeric' })}</span>
+    </div>
+    <div class="timeline-months">${months.map(m => `<div class="timeline-month">${m}</div>`).join('')}</div>
+    ${PROJECTS.map(p => {
+      const start = monthMap[p.start] || 0;
+      const widthPct = Math.min(p.months * 16.66, 85);
+      const leftPct = start * 16.66;
+      const barClass = p.status === 'completed' ? 'completed' : (p.id === currentProject ? 'active' : '');
+      return `
+        <div class="timeline-row" onclick="switchProject('${p.id}')">
+          <div class="timeline-project">
+            <div class="timeline-project-name">${p.name}</div>
+            <div class="timeline-project-status">${p.status}</div>
+          </div>
+          <div class="timeline-bar-wrapper">
+            <div class="timeline-bar ${barClass}" style="left:${leftPct}%;width:${widthPct}%">${p.months}mo</div>
+          </div>
+        </div>
+      `;
+    }).join('')}
+  `;
+}
+
+function renderActivity() {
+  const icons = { create: '✓', update: '→', complete: '●', comment: '💬' };
+  document.getElementById('activity-feed').innerHTML = ACTIVITIES.map(a => `
+    <div class="activity-item">
+      <div class="activity-icon ${a.type}">${icons[a.type] || '○'}</div>
+      <div class="activity-content">
+        <div class="activity-text">${a.text}</div>
+        <div class="activity-time">${a.time}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function switchProject(id) {
+  currentProject = id;
+  renderKPI();
+  renderProjectSelector();
+  renderKanban();
+  renderTimeline();
+}
+
+function showNewProject() {
+  const name = prompt('New project name:');
+  if (name && name.trim()) {
+    const id = 'p' + (PROJECTS.length + 1);
+    PROJECTS.push({ id, name: name.trim(), description: '', status: 'active', created: new Date().toISOString().slice(0,10), due: '', start: 'Jun', months: 2 });
+    switchProject(currentProject);
+  }
+}
+
+// Init
+renderKPI();
+renderProjectSelector();
+renderKanban();
+renderTimeline();
+renderActivity();
+
+// Sidebar nav
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', function(e) {
+    e.preventDefault();
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    this.classList.add('active');
+    document.querySelector('.topbar-title').textContent = this.querySelector('span').textContent;
+  });
+});
+</script>
+</body>
+</html>

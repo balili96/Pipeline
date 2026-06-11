@@ -218,34 +218,21 @@ export const aiSessions: AIAgentSession[] = [
   {
     id: "session-1",
     projectId: "proj-1",
-    type: "plan",
+    type: "integration",
     status: "active",
     messages: [
       {
         id: "msg-1",
         role: "user",
-        content: "Help me plan the sprint for the marketing website redesign.",
+        content: "Help me set up the project charter for the marketing website redesign.",
         timestamp: "2026-06-06T09:00:00Z",
       },
       {
         id: "msg-2",
         role: "agent",
         content:
-          "I've analyzed the project requirements. Here's my suggested sprint breakdown:\n\n1. **Week 1**: Hero section & navigation (foundational UI)\n2. **Week 2**: Contact form & content sections\n3. **Week 3**: Performance optimization & SEO\n4. **Week 4**: Testing & deployment\n\nI recommend starting with the responsive navigation and hero section in parallel. Would you like me to create specific tasks for these?",
+          "Here's your Project Charter draft:\n\n**Project Title:** Marketing Website Redesign\n**Business Case:** Modernize company marketing presence\n**Objectives:**\n1. Complete overhaul of marketing site\n2. Improve performance & SEO\n3. Modern design system\n\nI recommend we proceed with stakeholder identification next.",
         timestamp: "2026-06-06T09:00:05Z",
-      },
-      {
-        id: "msg-3",
-        role: "user",
-        content: "Yes, please create the tasks for week 1.",
-        timestamp: "2026-06-06T09:01:00Z",
-      },
-      {
-        id: "msg-4",
-        role: "agent",
-        content:
-          "Done! I've created the following tasks for Week 1:\n\n- ✅ **Design hero section mockups** (assigned to Alice)\n- ✅ **Implement responsive navigation** (assigned to Charlie)\n\nBoth tasks are now in the Planned column. You can adjust priorities and assignees as needed.",
-        timestamp: "2026-06-06T09:01:10Z",
       },
     ],
     startedAt: "2026-06-06T09:00:00Z",
@@ -253,20 +240,20 @@ export const aiSessions: AIAgentSession[] = [
   {
     id: "session-2",
     projectId: "proj-1",
-    type: "code",
+    type: "scope",
     status: "active",
     messages: [
       {
         id: "msg-5",
         role: "user",
-        content: "Start coding the hero section based on the mockups.",
+        content: "Help me define the scope for the hero section.",
         timestamp: "2026-06-06T10:00:00Z",
       },
       {
         id: "msg-6",
         role: "agent",
         content:
-          "I've started implementing the hero section. Here's what I'm building:\n\n- Responsive hero layout with gradient background\n- CTA button component with hover effects\n- Animated headline with staggered text reveal\n\nI'll create a PR once the initial implementation is done. ETA: ~15 minutes.",
+          "Scope defined for Hero Section:\n\n**In Scope:**\n- Responsive hero layout\n- CTA button component\n- Animated headline\n\n**Out of Scope:**\n- Video background\n- Interactive 3D elements\n\nWould you like me to create the WBS for this?",
         timestamp: "2026-06-06T10:00:08Z",
       },
     ],
@@ -275,20 +262,20 @@ export const aiSessions: AIAgentSession[] = [
   {
     id: "session-3",
     projectId: "proj-1",
-    type: "test",
+    type: "quality",
     status: "completed",
     messages: [
       {
         id: "msg-7",
         role: "user",
-        content: "Run tests on the navigation component.",
+        content: "Run quality checks on the navigation component.",
         timestamp: "2026-06-05T14:00:00Z",
       },
       {
         id: "msg-8",
         role: "agent",
         content:
-          "Test results for navigation component:\n\n- ✅ Unit tests: 12/12 passed\n- ✅ Integration tests: 8/8 passed\n- ✅ Accessibility: WCAG 2.1 AA compliant\n- ⚠️ Performance: LCP at 2.3s (threshold: 2.5s) — acceptable\n\nAll critical tests pass. Ready for review.",
+          "Quality check results:\n\n- ✅ Accessibility: WCAG 2.1 AA compliant\n- ✅ Performance: LCP at 2.3s (threshold: 2.5s)\n- ✅ Code standards: All linting passes\n- ⚠️ Test coverage: 72% (target: 80%)\n\nRecommendation: Add unit tests for edge cases.",
         timestamp: "2026-06-05T14:02:30Z",
       },
     ],
@@ -297,20 +284,20 @@ export const aiSessions: AIAgentSession[] = [
   {
     id: "session-4",
     projectId: "proj-2",
-    type: "plan",
+    type: "risk",
     status: "active",
     messages: [
       {
         id: "msg-9",
         role: "user",
-        content: "Plan the API integration endpoints for the mobile app.",
+        content: "Identify risks for the API integration project.",
         timestamp: "2026-06-04T11:00:00Z",
       },
       {
         id: "msg-10",
         role: "agent",
         content:
-          "Here's the API integration plan for the mobile app:\n\n1. **Auth API** — Login/Register with JWT\n2. **User API** — Profile CRUD\n3. **Content API** — Blog/articles endpoint\n4. **Notification API** — Push notification service\n5. **Analytics API** — Event tracking\n\nI recommend starting with Auth API first as it's a dependency for all other endpoints.",
+          "Risk assessment for Mobile App API Integration:\n\n1. **🔴 API Availability** — Third-party API downtime (High impact)\n2. **🟡 Data Sync** — Real-time sync complexity (Medium)\n3. **🟢 Auth Flow** — JWT implementation straightforward (Low)\n\nRecommended mitigation: API retry logic + fallback cache.",
         timestamp: "2026-06-04T11:00:06Z",
       },
     ],
@@ -319,20 +306,20 @@ export const aiSessions: AIAgentSession[] = [
   {
     id: "session-5",
     projectId: "proj-2",
-    type: "code",
+    type: "schedule",
     status: "completed",
     messages: [
       {
         id: "msg-11",
         role: "user",
-        content: "Build the authentication API endpoint.",
+        content: "Build the schedule for API implementation.",
         timestamp: "2026-06-03T15:00:00Z",
       },
       {
         id: "msg-12",
         role: "agent",
         content:
-          "Auth API implementation complete:\n\n- POST /api/auth/register — User registration with validation\n- POST /api/auth/login — Login with JWT token generation\n- POST /api/auth/refresh — Token refresh endpoint\n- GET /api/auth/me — Current user profile\n\nPR #23 is ready for review. Includes full test coverage.",
+          "Schedule Plan:\n\n- Week 1: Auth API endpoints\n- Week 2: User CRUD + integration tests\n- Week 3: Rate limiting + deployment\n\nCritical Path: Auth → User CRUD → Tests → Deploy\nTotal: 3 weeks with 3-day buffer.",
         timestamp: "2026-06-03T15:12:00Z",
       },
     ],
@@ -341,20 +328,20 @@ export const aiSessions: AIAgentSession[] = [
   {
     id: "session-6",
     projectId: "proj-3",
-    type: "docs",
+    type: "communications",
     status: "completed",
     messages: [
       {
         id: "msg-13",
         role: "user",
-        content: "Generate documentation for the internal dashboard API.",
+        content: "Generate the communications plan for the dashboard project.",
         timestamp: "2026-05-20T13:00:00Z",
       },
       {
         id: "msg-14",
         role: "agent",
         content:
-          "Documentation generated:\n\n- 📄 **API Reference** — All endpoints with request/response schemas\n- 📄 **Architecture Overview** — System diagram and data flow\n- 📄 **Setup Guide** — Local development environment setup\n- 📄 **Changelog** — Version history with breaking changes\n\nAll docs are published and synced to the project wiki.",
+          "Communications Plan generated:\n\n- 📄 **Status Reports** — Weekly to stakeholders\n- 📄 **Team Updates** — Daily standup\n- 📄 **Executive Summary** — Monthly dashboard\n- 📄 **Release Notes** — Per deployment\n\nAll communications published and scheduled.",
         timestamp: "2026-05-20T13:05:00Z",
       },
     ],
@@ -407,9 +394,9 @@ export const activityEvents: ActivityEvent[] = [
   {
     id: "act-1",
     projectId: "proj-1",
-    agentType: "plan",
-    action: "Created sprint plan",
-    detail: "3 milestones, 8 tasks generated for Marketing Website Redesign",
+    agentType: "integration",
+    action: "Created Project Charter",
+    detail: "Project Charter drafted for Marketing Website Redesign",
     status: "success",
     timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
     duration: "2.3s",
@@ -417,9 +404,9 @@ export const activityEvents: ActivityEvent[] = [
   {
     id: "act-2",
     projectId: "proj-1",
-    agentType: "code",
-    action: "Built hero section component",
-    detail: "2 files modified, PR #42 opened",
+    agentType: "scope",
+    action: "Defined scope & WBS",
+    detail: "Requirements documented with WBS breakdown",
     status: "success",
     timestamp: new Date(Date.now() - 1000 * 60 * 10).toISOString(),
     duration: "4.1s",
@@ -427,9 +414,9 @@ export const activityEvents: ActivityEvent[] = [
   {
     id: "act-3",
     projectId: "proj-1",
-    agentType: "test",
-    action: "Ran test suite",
-    detail: "42/42 passed, 87% coverage",
+    agentType: "quality",
+    action: "Ran quality audit",
+    detail: "42/42 checks passed, 87% quality score",
     status: "success",
     timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
     duration: "1.8s",
@@ -441,30 +428,44 @@ export function getActivityEventsByProject(projectId: string): ActivityEvent[] {
 }
 
 export function getInitialPipelineStages(projectId: string): PipelineStage[] {
-  // Return some completed stages based on project progress
   if (projectId === "proj-1") {
     return [
-      { type: "plan", status: "completed", summary: "3 milestones, 8 tasks" },
-      { type: "code", status: "active", summary: "Building hero section…" },
-      { type: "test", status: "idle" },
-      { type: "deploy", status: "idle" },
-      { type: "docs", status: "idle" },
+      { type: "integration", status: "completed", summary: "Project Charter created" },
+      { type: "scope", status: "completed", summary: "WBS & requirements defined" },
+      { type: "schedule", status: "active", summary: "Timeline in progress…" },
+      { type: "cost", status: "idle" },
+      { type: "quality", status: "idle" },
+      { type: "resource", status: "idle" },
+      { type: "communications", status: "idle" },
+      { type: "risk", status: "idle" },
+      { type: "procurement", status: "idle" },
+      { type: "stakeholder", status: "idle" },
     ];
   }
   if (projectId === "proj-2") {
     return [
-      { type: "plan", status: "completed", summary: "5 API endpoints planned" },
-      { type: "code", status: "completed", summary: "Auth API implemented" },
-      { type: "test", status: "active", summary: "Running integration tests…" },
-      { type: "deploy", status: "idle" },
-      { type: "docs", status: "idle" },
+      { type: "integration", status: "completed", summary: "Integration plan ready" },
+      { type: "scope", status: "completed", summary: "API scope defined" },
+      { type: "schedule", status: "completed", summary: "3-week schedule" },
+      { type: "cost", status: "completed", summary: "Budget estimated" },
+      { type: "quality", status: "active", summary: "Quality review running…" },
+      { type: "resource", status: "idle" },
+      { type: "communications", status: "idle" },
+      { type: "risk", status: "idle" },
+      { type: "procurement", status: "idle" },
+      { type: "stakeholder", status: "idle" },
     ];
   }
   return [
-    { type: "plan", status: "idle" },
-    { type: "code", status: "idle" },
-    { type: "test", status: "idle" },
-    { type: "deploy", status: "idle" },
-    { type: "docs", status: "idle" },
+    { type: "integration", status: "idle" },
+    { type: "scope", status: "idle" },
+    { type: "schedule", status: "idle" },
+    { type: "cost", status: "idle" },
+    { type: "quality", status: "idle" },
+    { type: "resource", status: "idle" },
+    { type: "communications", status: "idle" },
+    { type: "risk", status: "idle" },
+    { type: "procurement", status: "idle" },
+    { type: "stakeholder", status: "idle" },
   ];
 }

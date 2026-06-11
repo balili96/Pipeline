@@ -11,7 +11,10 @@ interface PipelineFlowProps {
   running?: boolean;
 }
 
-const stageOrder: AgentType[] = ["plan", "code", "test", "deploy", "docs"];
+const stageOrder: AgentType[] = [
+  "integration", "scope", "schedule", "cost", "quality",
+  "resource", "communications", "risk", "procurement", "stakeholder",
+];
 
 /* ─── Stage Detail Panel ─── */
 
