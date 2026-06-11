@@ -120,7 +120,7 @@ function getScopeResponse(input: string, projectName: string): AIAgentMessage {
 
 Here's the high-level WBS for **${projectName}**:
 
-```
+\`\`\`
 1.0 ${projectName}
 ├── 1.1 Planning Phase
 │   ├── 1.1.1 Requirements Gathering
@@ -132,7 +132,7 @@ Here's the high-level WBS for **${projectName}**:
 └── 1.3 Closure Phase
     ├── 1.3.1 Deployment
     └── 1.3.2 Handover
-```
+\`\`\`
 
 **Next Steps:**
 1. Validate this WBS with stakeholders

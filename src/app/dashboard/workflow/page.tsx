@@ -6,7 +6,7 @@ import {
   getInitialPipelineStages,
   getActivityEventsByProject,
 } from "@/lib/data";
-import { PipelineStage, ActivityEvent, PipelineRun, WorkflowTemplate } from "@/lib/types";
+import { AgentType, PipelineStage, ActivityEvent, PipelineRun, WorkflowTemplate } from "@/lib/types";
 import PipelineFlow from "@/components/pipeline-flow";
 import ActivityTrail from "@/components/activity-trail";
 import PipelineInsights from "@/components/pipeline-insights";
