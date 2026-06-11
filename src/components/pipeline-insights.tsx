@@ -9,39 +9,42 @@ import { projects as projectList } from "@/lib/data";
 const TEMPLATES: WorkflowTemplate[] = [
   {
     id: "full-pipeline",
-    name: "Full Pipeline",
-    description: "End-to-end: plan, build, test, deploy & document",
+    name: "Full PMBOK Pipeline",
+    description: "10 stages — integration, scope, schedule, cost, quality, resource, comms, risk, procurement, stakeholder",
     icon: "🚀",
-    stages: ["plan", "code", "test", "deploy", "docs"],
-    durations: { plan: 2000, code: 3000, test: 2000, deploy: 2500, docs: 1500 },
+    stages: ["integration", "scope", "schedule", "cost", "quality", "resource", "communications", "risk", "procurement", "stakeholder"],
+    durations: { integration: 2000, scope: 2000, schedule: 2500, cost: 2000, quality: 1500, resource: 1500, communications: 1500, risk: 2000, procurement: 2000, stakeholder: 1500 },
   },
   {
     id: "quick-build",
-    name: "Quick Build",
-    description: "Skip planning — straight to code, test & deploy",
-    icon: "⚡",
-    stages: ["code", "test", "deploy"],
-    durations: { plan: 0, code: 3000, test: 1500, deploy: 2000, docs: 0 },
+    name: "Scope → Schedule → Quality",
+    description: "Focus on scope definition, timeline & quality gates",
+    icon: "🎯",
+    stages: ["scope", "schedule", "quality"],
+    durations: { integration: 0, scope: 2500, schedule: 2000, cost: 0, quality: 2000, resource: 0, communications: 0, risk: 0, procurement: 0, stakeholder: 0 },
   },
   {
     id: "bug-fix",
-    name: "Bug Fix",
-    description: "Fast track: code fix → test → deploy",
+    name: "Risk → Quality → Stakeholder",
+    description: "Fast track: assess impact, verify fix, communicate",
     icon: "🐛",
-    stages: ["code", "test", "deploy"],
-    durations: { plan: 0, code: 2000, test: 2000, deploy: 1500, docs: 0 },
+    stages: ["risk", "quality", "stakeholder"],
+    durations: { integration: 0, scope: 0, schedule: 0, cost: 0, quality: 2000, resource: 0, communications: 0, risk: 2000, procurement: 0, stakeholder: 1500 },
   },
   {
     id: "docs-only",
-    name: "Docs Update",
-    description: "Generate documentation & API reference only",
-    icon: "📄",
-    stages: ["docs"],
-    durations: { plan: 0, code: 0, test: 0, deploy: 0, docs: 3000 },
+    name: "Integration + Comm.",
+    description: "Lessons learned, communications plan & stakeholder update",
+    icon: "📢",
+    stages: ["integration", "communications", "stakeholder"],
+    durations: { integration: 2000, scope: 0, schedule: 0, cost: 0, quality: 0, resource: 0, communications: 2000, risk: 0, procurement: 0, stakeholder: 1500 },
   },
 ];
 
-const stageOrder: AgentType[] = ["plan", "code", "test", "deploy", "docs"];
+const stageOrder: AgentType[] = [
+  "integration", "scope", "schedule", "cost", "quality",
+  "resource", "communications", "risk", "procurement", "stakeholder",
+];
 
 /* ─── Helpers ─── */
 

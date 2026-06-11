@@ -5,11 +5,16 @@ import { aiSessions, getProjectName } from "@/lib/data";
 import type { AIAgentSession, AIAgentMessage } from "@/lib/types";
 
 const typeConfig: Record<string, { label: string; icon: string; color: string }> = {
-  plan: { label: "Planning", icon: "📋", color: "bg-amber/10 text-amber" },
-  code: { label: "Development", icon: "💻", color: "bg-accent/10 text-accent" },
-  test: { label: "Testing", icon: "🧪", color: "bg-red/10 text-red" },
-  deploy: { label: "Deployment", icon: "🚀", color: "bg-green/10 text-green" },
-  docs: { label: "Documentation", icon: "📄", color: "bg-purple-100 text-purple-700" },
+  integration: { label: "Integration", icon: "🧩", color: "bg-blue/10 text-blue" },
+  scope: { label: "Scope", icon: "🎯", color: "bg-emerald/10 text-emerald" },
+  schedule: { label: "Schedule", icon: "📅", color: "bg-amber/10 text-amber" },
+  cost: { label: "Cost", icon: "💰", color: "bg-purple/10 text-purple" },
+  quality: { label: "Quality", icon: "✅", color: "bg-teal/10 text-teal" },
+  resource: { label: "Resource", icon: "👥", color: "bg-pink/10 text-pink" },
+  communications: { label: "Comm.", icon: "📢", color: "bg-blue/10 text-blue" },
+  risk: { label: "Risk", icon: "⚠️", color: "bg-red/10 text-red" },
+  procurement: { label: "Procurement", icon: "📦", color: "bg-orange/10 text-orange" },
+  stakeholder: { label: "Stakeholder", icon: "🤝", color: "bg-violet/10 text-violet" },
 };
 
 const statusConfig: Record<string, { label: string; dot: string }> = {
@@ -46,7 +51,7 @@ function SessionDetail({
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const type = typeConfig[initialSession.type] || typeConfig.plan;
+  const type = typeConfig[initialSession.type] || typeConfig.integration;
   const status = statusConfig[initialSession.status] || statusConfig.completed;
 
   useEffect(() => {
@@ -276,7 +281,7 @@ function SessionCard({
   session: AIAgentSession;
   onClick: () => void;
 }) {
-  const type = typeConfig[session.type] || typeConfig.plan;
+  const type = typeConfig[session.type] || typeConfig.integration;
   const status = statusConfig[session.status] || statusConfig.completed;
   const lastMsg = session.messages[session.messages.length - 1];
   const lastContent = lastMsg?.content.slice(0, 100) + (lastMsg?.content.length > 100 ? "..." : "");

@@ -350,7 +350,7 @@ export default function WorkflowPage() {
         icon="🔷"
         isOpen={openSections.flow}
         onToggle={() => toggleSection("flow")}
-        badge={pipelineRunning ? "Running" : `${pipelineStages.filter((s) => s.status === "completed").length}/5`}
+        badge={pipelineRunning ? "Running" : `${pipelineStages.filter((s) => s.status === "completed").length}/10`}
       >
         <PipelineFlow
           stages={pipelineStages}

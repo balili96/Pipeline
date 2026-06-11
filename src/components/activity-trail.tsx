@@ -37,7 +37,10 @@ const statusStyles: Record<string, { dot: string; bg: string; border: string }> 
   pending: { dot: "bg-gray-300", bg: "bg-gray-50", border: "border-gray-200" },
 };
 
-const allAgentTypes: AgentType[] = ["plan", "code", "test", "deploy", "docs"];
+const allAgentTypes: AgentType[] = [
+  "integration", "scope", "schedule", "cost", "quality",
+  "resource", "communications", "risk", "procurement", "stakeholder",
+];
 
 /* ─── Duration Metrics Bar ─── */
 
