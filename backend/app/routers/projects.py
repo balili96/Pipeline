@@ -18,7 +18,12 @@ async def list_projects(db: AsyncSession = Depends(get_db)):
 
 @router.post("", response_model=ProjectResponse, status_code=201)
 async def create_project(data: ProjectCreate, db: AsyncSession = Depends(get_db)):
-    project = Project(name=data.name, description=data.description)
+    project = Project(
+        id=data.id,
+        name=data.name,
+        description=data.description,
+        status=ProjectStatus(data.status) if data.status else None,
+    )
     db.add(project)
     await db.commit()
     await db.refresh(project)

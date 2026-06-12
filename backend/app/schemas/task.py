@@ -3,6 +3,7 @@ from typing import Optional
 from datetime import datetime
 
 class TaskCreate(BaseModel):
+    id: Optional[str] = None
     title: str
     description: Optional[str] = ""
     status: Optional[str] = "planned"
@@ -10,6 +11,7 @@ class TaskCreate(BaseModel):
     tags: Optional[str] = ""
     assignee: Optional[str] = ""
     due_date: Optional[str] = ""
+    progress: Optional[int] = 0
     ai_generated: Optional[bool] = False
 
 class TaskUpdate(BaseModel):

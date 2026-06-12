@@ -3,8 +3,10 @@ from typing import Optional
 from datetime import datetime
 
 class ProjectCreate(BaseModel):
+    id: Optional[str] = None
     name: str
     description: Optional[str] = ""
+    status: Optional[str] = "active"
 
 class ProjectUpdate(BaseModel):
     name: Optional[str] = None

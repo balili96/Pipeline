@@ -22,6 +22,7 @@ async def create_task(project_id: str, data: TaskCreate, db: AsyncSession = Depe
         raise HTTPException(404, "Project not found")
 
     task = Task(
+        id=data.id,
         project_id=project_id,
         title=data.title,
         description=data.description,
@@ -30,6 +31,7 @@ async def create_task(project_id: str, data: TaskCreate, db: AsyncSession = Depe
         tags=data.tags,
         assignee=data.assignee or "",
         due_date=data.due_date or "",
+        progress=data.progress or 0,
         ai_generated=data.ai_generated or False,
     )
     db.add(task)
