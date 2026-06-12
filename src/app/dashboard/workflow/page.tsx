@@ -131,12 +131,12 @@ function Section({
 /* ─── Page Component ─── */
 
 export default function WorkflowPage() {
-  const [selectedProjectId, setSelectedProjectId] = useState<string>("proj-1");
+  const [selectedProjectId, setSelectedProjectId] = useState<string>("proj-331f429c");
   const [pipelineStages, setPipelineStages] = useState<PipelineStage[]>(
-    () => getInitialPipelineStages("proj-1")
+    () => getInitialPipelineStages("proj-331f429c")
   );
   const [activityEvents, setActivityEvents] = useState<ActivityEvent[]>(
-    () => getActivityEventsByProject("proj-1")
+    () => getActivityEventsByProject("proj-331f429c")
   );
   const [pipelineRunning, setPipelineRunning] = useState(false);
   const [pipelineRuns, setPipelineRuns] = useState<PipelineRun[]>([]);

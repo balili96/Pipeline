@@ -2,21 +2,21 @@ import { Project, Task, AIAgentSession, ActivityEvent, PipelineStage } from "./t
 
 export const projects: Project[] = [
   {
-    id: "proj-1",
+    id: "proj-331f429c",
     name: "Marketing Website Redesign",
     description: "Complete overhaul of the company marketing site with modern design and improved performance.",
     status: "active",
     createdAt: "2026-05-15T08:00:00Z",
   },
   {
-    id: "proj-2",
+    id: "proj-858a29e6",
     name: "Mobile App API Integration",
     description: "Build and integrate REST APIs for the new mobile application launch.",
     status: "active",
     createdAt: "2026-05-20T10:30:00Z",
   },
   {
-    id: "proj-3",
+    id: "proj-c77f534a",
     name: "Internal Dashboard v2",
     description: "Upgrade the internal analytics dashboard with real-time data and new visualizations.",
     status: "completed",
@@ -33,7 +33,7 @@ export const tasks: Task[] = [
     status: "planned",
     priority: "high",
     tags: ["design"],
-    projectId: "proj-1",
+    projectId: "proj-331f429c",
     aiGenerated: false,
     progress: 0,
     assignee: "Alice",
@@ -46,7 +46,7 @@ export const tasks: Task[] = [
     status: "planned",
     priority: "medium",
     tags: ["devops"],
-    projectId: "proj-1",
+    projectId: "proj-331f429c",
     aiGenerated: true,
     progress: 0,
     assignee: "Bob",
@@ -59,7 +59,7 @@ export const tasks: Task[] = [
     status: "in_progress",
     priority: "high",
     tags: ["frontend"],
-    projectId: "proj-1",
+    projectId: "proj-331f429c",
     aiGenerated: false,
     progress: 65,
     assignee: "Charlie",
@@ -72,7 +72,7 @@ export const tasks: Task[] = [
     status: "in_progress",
     priority: "medium",
     tags: ["performance"],
-    projectId: "proj-1",
+    projectId: "proj-331f429c",
     aiGenerated: true,
     progress: 30,
     assignee: "Alice",
@@ -85,7 +85,7 @@ export const tasks: Task[] = [
     status: "done",
     priority: "medium",
     tags: ["frontend"],
-    projectId: "proj-1",
+    projectId: "proj-331f429c",
     aiGenerated: false,
     progress: 100,
     assignee: "Charlie",
@@ -98,7 +98,7 @@ export const tasks: Task[] = [
     status: "done",
     priority: "low",
     tags: ["seo"],
-    projectId: "proj-1",
+    projectId: "proj-331f429c",
     aiGenerated: true,
     progress: 100,
     assignee: "Diana",
@@ -113,7 +113,7 @@ export const tasks: Task[] = [
     status: "planned",
     priority: "high",
     tags: ["backend", "docs"],
-    projectId: "proj-2",
+    projectId: "proj-858a29e6",
     aiGenerated: false,
     progress: 0,
     assignee: "Bob",
@@ -126,7 +126,7 @@ export const tasks: Task[] = [
     status: "in_progress",
     priority: "high",
     tags: ["backend", "security"],
-    projectId: "proj-2",
+    projectId: "proj-858a29e6",
     aiGenerated: true,
     progress: 50,
     assignee: "Bob",
@@ -139,7 +139,7 @@ export const tasks: Task[] = [
     status: "in_progress",
     priority: "medium",
     tags: ["backend"],
-    projectId: "proj-2",
+    projectId: "proj-858a29e6",
     aiGenerated: false,
     progress: 75,
     assignee: "Eve",
@@ -152,7 +152,7 @@ export const tasks: Task[] = [
     status: "planned",
     priority: "medium",
     tags: ["testing"],
-    projectId: "proj-2",
+    projectId: "proj-858a29e6",
     aiGenerated: true,
     progress: 0,
     assignee: "Frank",
@@ -165,7 +165,7 @@ export const tasks: Task[] = [
     status: "done",
     priority: "low",
     tags: ["backend", "security"],
-    projectId: "proj-2",
+    projectId: "proj-858a29e6",
     aiGenerated: false,
     progress: 100,
     assignee: "Bob",
@@ -180,7 +180,7 @@ export const tasks: Task[] = [
     status: "done",
     priority: "high",
     tags: ["frontend", "charts"],
-    projectId: "proj-3",
+    projectId: "proj-c77f534a",
     aiGenerated: false,
     progress: 100,
     assignee: "Charlie",
@@ -193,7 +193,7 @@ export const tasks: Task[] = [
     status: "done",
     priority: "medium",
     tags: ["feature"],
-    projectId: "proj-3",
+    projectId: "proj-c77f534a",
     aiGenerated: true,
     progress: 100,
     assignee: "Alice",
@@ -206,7 +206,7 @@ export const tasks: Task[] = [
     status: "done",
     priority: "high",
     tags: ["backend", "security"],
-    projectId: "proj-3",
+    projectId: "proj-c77f534a",
     aiGenerated: false,
     progress: 100,
     assignee: "Bob",
@@ -217,7 +217,7 @@ export const tasks: Task[] = [
 export const aiSessions: AIAgentSession[] = [
   {
     id: "session-1",
-    projectId: "proj-1",
+    projectId: "proj-331f429c",
     type: "integration",
     status: "active",
     messages: [
@@ -239,7 +239,7 @@ export const aiSessions: AIAgentSession[] = [
   },
   {
     id: "session-2",
-    projectId: "proj-1",
+    projectId: "proj-331f429c",
     type: "scope",
     status: "active",
     messages: [
@@ -261,7 +261,7 @@ export const aiSessions: AIAgentSession[] = [
   },
   {
     id: "session-3",
-    projectId: "proj-1",
+    projectId: "proj-331f429c",
     type: "quality",
     status: "completed",
     messages: [
@@ -283,7 +283,7 @@ export const aiSessions: AIAgentSession[] = [
   },
   {
     id: "session-4",
-    projectId: "proj-2",
+    projectId: "proj-858a29e6",
     type: "risk",
     status: "active",
     messages: [
@@ -305,7 +305,7 @@ export const aiSessions: AIAgentSession[] = [
   },
   {
     id: "session-5",
-    projectId: "proj-2",
+    projectId: "proj-858a29e6",
     type: "schedule",
     status: "completed",
     messages: [
@@ -327,7 +327,7 @@ export const aiSessions: AIAgentSession[] = [
   },
   {
     id: "session-6",
-    projectId: "proj-3",
+    projectId: "proj-c77f534a",
     type: "communications",
     status: "completed",
     messages: [
@@ -393,7 +393,7 @@ export function getProjectAnalytics(projectId: string) {
 export const activityEvents: ActivityEvent[] = [
   {
     id: "act-1",
-    projectId: "proj-1",
+    projectId: "proj-331f429c",
     agentType: "integration",
     action: "Created Project Charter",
     detail: "Project Charter drafted for Marketing Website Redesign",
@@ -403,7 +403,7 @@ export const activityEvents: ActivityEvent[] = [
   },
   {
     id: "act-2",
-    projectId: "proj-1",
+    projectId: "proj-331f429c",
     agentType: "scope",
     action: "Defined scope & WBS",
     detail: "Requirements documented with WBS breakdown",
@@ -413,7 +413,7 @@ export const activityEvents: ActivityEvent[] = [
   },
   {
     id: "act-3",
-    projectId: "proj-1",
+    projectId: "proj-331f429c",
     agentType: "quality",
     action: "Ran quality audit",
     detail: "42/42 checks passed, 87% quality score",
@@ -428,7 +428,7 @@ export function getActivityEventsByProject(projectId: string): ActivityEvent[] {
 }
 
 export function getInitialPipelineStages(projectId: string): PipelineStage[] {
-  if (projectId === "proj-1") {
+  if (projectId === "proj-331f429c") {
     return [
       { type: "integration", status: "completed", summary: "Project Charter created" },
       { type: "scope", status: "completed", summary: "WBS & requirements defined" },
@@ -442,7 +442,7 @@ export function getInitialPipelineStages(projectId: string): PipelineStage[] {
       { type: "stakeholder", status: "idle" },
     ];
   }
-  if (projectId === "proj-2") {
+  if (projectId === "proj-858a29e6") {
     return [
       { type: "integration", status: "completed", summary: "Integration plan ready" },
       { type: "scope", status: "completed", summary: "API scope defined" },
